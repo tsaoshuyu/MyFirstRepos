@@ -110,4 +110,232 @@ is.na(NA)
 is.na(2)
 c(class(2), class('Hello'), class(TRUE))
 ```
+###排序以及替換
+```{r}
+a <- c(3, 4, 2, 7, 10, 23, 8, 9, 11)
+sort(a)
+inc.order <- order(a)
+dec.order <- order(a, decreasing = TRUE)
+inc.order
+dec.order
+a[dec.order[3]]
+a[c(5, 8)]
+a[c(8, 5)]
+a[c(5, 8)] <- a[c(8, 5)]
+a
+a[c(2:7)] <- a[c(7:2)]
+a
+```
+###Control Flow 
+```{r}
+set.seed(20191025)
+X <- sample(1:6,1)
+repeat{
+  if(length(unique(X))<6){
+    X <- c(X,sample(1:6,1))
+  }else{
+    break
+  }
+}
+length(X)
+##Control Flow
+set.seed(20191025)
+s <- c()
+for(i in 1:100){
+  s <- c(s,runif(1))
+  if(sum(s)>3){
+    print(s)
+    break
+  }
+}
+```
+###費式數列
+```{r}
+Fib1 <- 1
+Fib2 <- 1
+Fibonacci <- c(Fib1)
+repeat
+{
+  if(Fib2 >= 100) break
+    Fibonacci <- c(Fibonacci, Fib2)
+    Fib1 <- Fibonacci[length(Fibonacci) - 1]
+    Fib2 <- Fib1 + Fibonacci[length(Fibonacci)]
+
+}
+Fibonacci
+```
+###Matrix
+```{r}
+A <- c(3, 2, 1, 2, 2, 6, 4, 1, 4, 8, 6, 2, 5, 10, 8, 6, 3, 4, 3, 4)
+B <- matrix(A, 4, 5)
+
+A <- matrix(rnorm(1500), 500, 3)
+library(rbenchmark)
+benchmark(replications=rep(1000, 1),
+          apply(A, 1, sum), rowSums(A),
+          columns=c('test', 'elapsed', 'relative'))
+```
+###迴圈
+```{r}
+a <- 3
+b <- 7
+if(a == b){
+  c <- a*b
+  print(c)
+}else if(a == 2){
+  c <- 4
+}else{
+  c <- a+b
+  print(c)
+}
+
+#型式二
+if(a == b) c <- a*b
+
+basket <- c("r", "b", "y", "y", "r", "r", "b")
+n.r <- 0
+n.b <- 0
+n.y <- 0
+for(i in 1:length(basket)){
+  if(basket[i] == "r"){
+    n.r <- n.r + 1
+  }else if(basket[i] == "b"){
+    n.b <- n.b + 1
+  }else{
+    n.y = n.y + 1
+  }
+}
+ans <- c(n.r, n.b, n.y)
+ans
+
+n <- 1
+m <- 2
+ifelse(n == m, 100, 1)
+
+#ex
+v <- c(0.87, -0.47, 0.74, -0.60, -0.23, 0.63, -1.16, -1.08,
+       -2.02, 0.26, 0.85, -1.73, 1.12, -1.32, -1.08, -0.95, 
+       -1.73, -0.88)
+v.min <- v[1]
+v.Max <- v[1]
+for(i in 1:length(v)){
+  if(v.min > v[i]){
+    v.min <- v[i]
+  }
+  if(v.Max < v[i]){
+    v.Max <- v[i]  
+  }
+}
+v.Max
+v.min
+```
+* binomial 
+
+```{r}
+dbinom(x=3,size=9,prob=0.5)
+#cumulative probability(P(X<=3))
+pbinom(3,9,0.5)
+qbinom(0.76,9,0.5)
+```
+
+###ggplot
+#需要API Key
+library(ggmap)
+route_df <- route(from = "Hyderabad, Telangana 500085, India",
+                  to = "Kukatpally, Hyderabad, Telangana 500072, India",
+                  structure = "route")
+
+my_map <- get_map("Hyderabad, Telangana 500085, India", zoom = 13)
+
+ggmap(my_map) +
+  geom_path(aes(x = lon, y = lat), color = "blue", size = 1.5,
+            data = route_df, lineend = "round")
+
+
+trek_df <- trek(from = "Hyderabad, Telangana 500085, India",
+                  to = "Kukatpally, Hyderabad, Telangana 500072, India")
+
+my_map <- get_map("Hyderabad, Telangana 500085, India", zoom = 13)
+
+ggmap(my_map) +
+  geom_path(aes(x = lon, y = lat), color = "red", size = 1.5,
+            data = trek_df, lineend = "round")
+
+## comparison to trek
+route_df <- route(from, to, structure = "legs")
+qmap("college station, texas", zoom = 8) +
+  geom_path(
+    aes(x = lon, y = lat),  colour = "red",
+    size = 1.5, alpha = .5,
+    data = route_df, lineend = "round"
+  ) +
+  geom_path(
+    aes(x = lon, y = lat),  colour = "blue",
+    size = 1.5, alpha = .5,
+    data = trek_df, lineend = "round"
+  )
+
+qmap("college station, texas", zoom = 6) +
+  geom_path(
+    aes(x = lon, y = lat), colour = "red", size = 1.5,
+    data = route_df, lineend = "round"
+  )
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+1.(1)
+Binomial distribution with parameters n and p with x = 0, …, n
+$$f(x) = {{n}\choose{x}}\cdot p^x \cdot (1-p)^{n-x},x = 0,...,n$$
+
+1.(2)
+Gamma distribution with shape parameter $\alpha$ and the rate parameter with x>0.
+$$ f(x) = \frac{x^{\alpha-1} e^{-x/\beta}}{\beta^\alpha \Gamma(\alpha)},\Gamma(\alpha) = \int_{0}^{\infty}{t^{\alpha-1} e^{-t} dt},\alpha,\beta > 0$$
+
+
+1.(3)
+Normal distribution with parameters  and  with −∞ < x < ∞.
+$$f(x) = \frac {1}{\sigma {\sqrt {2\pi}}}e^{-\frac {\left(x-\mu \right)^{2}}{2\sigma ^{2}}},−∞ < x < ∞$$
+2. Draw the pdf (or pmf) of each distribution in Question 1. 
+```{r, fig.width = 10, fig.height = 8}
+par(mfrow = c(2,2))
+
+x <- seq(0,10)
+n <- 10
+k <- seq(0,n)
+plot(x,dbinom(k,n,0,7),type = "n",main = title(expression(paste("Binomial(", n , ", ", p, ") with ", n, " = 10"))) ,xlab = "x",ylab = "pmf",xlim = c(0,10),ylim = c(0,0.4))
+points(x,dbinom(k,n,0.7),type = "h",lty = 1)
+points(x,dbinom(k,n,0.5),type = "h",col = "blue",lty = 4)
+points(x,dbinom(k,n,0.2),type = "h",col = "red",lty = 2)
+points(x,dbinom(k,n,0.7),type = "p",pch = 19)
+points(x,dbinom(k,n,0.5),type = "p",col = "blue",pch = 8)
+points(x,dbinom(k,n,0.2),type = "p",col = "red",pch = 17)
+legend("topright",c("p = 0.7","p = 0.5","p = 0.2"),col = c(1,"blue",2),lty = c(1,4,2),pch = c(19,8,17),cex = 1)
+
+x <- seq(0,5)
+plot(x,dgamma(x,1,3),type = "n",maim = title(expression(paste("Gamma(", alpha , ", ", lambda, ") with ", lambda, " = 3"))),xlab = "x",ylab = "pdf",xlim = c(0,5),ylim = c(0,3))
+curve(dgamma(x,1,3),col = 1,lwd = 2,lty = 1,add = TRUE)
+curve(dgamma(x,2,3),col = 2,lwd = 2,lty = 2,add = TRUE)
+curve(dgamma(x,3,3),col = "blue",lwd = 2,lty = 4,add = TRUE)
+curve(dgamma(x,5,3),col = "grey",lwd = 2,lty = 5,add = TRUE)
+legend("topright",c("α = 1","α = 2","α = 3","α = 5"),col = c(1,2,"blue","grey"),lty = c(1,2,4,5),cex = 1)
+
+x <- seq(0,20)
+plot(x,dnorm(x,5,1),type = "n",maim = title(expression(paste("N(", mu , ", ", sigma^2, ") with ", sigma^2, " = 1"))),xlab = "x",ylab = "pdf",xlim = c(0,20),ylim = c(0,0.4))
+curve(dnorm(x,5,1),col = 1,lwd = 2,lty = 1,add = TRUE)
+curve(dnorm(x,10,1),col = 2,lwd = 2,lty = 2,add = TRUE)
+curve(dnorm(x,12,1),col = "blue",lwd = 2,lty = 4,add = TRUE)
+curve(dnorm(x,14,1),col = "grey",lwd = 2,lty = 5,add = TRUE)
+legend("topright",c("μ = 5","μ = 10","μ = 12","μ = 14"),col = c(1,2,3,"grey"),lty = c(1,2,4,5),cex = 1)
+
+x <- seq(-10,10)
+plot(x,dnorm(x,0,0.5),type = "n",maim = title(expression(paste("N(", mu , ", ", sigma^2, ") with ", mu, " = 0"))),xlab = "x",ylab = "pdf",xlim = c(-9,9),ylim = c(0,0.8))
+curve(dnorm(x,0,0.5),col = 1,lwd = 2,lty = 1,add = TRUE)
+curve(dnorm(x,0,1),col = 2,lwd = 2,lty = 2,add = TRUE)
+curve(dnorm(x,0,2),col = "blue",lwd = 2,lty = 4,add = TRUE)
+curve(dnorm(x,0,3),col = "grey",lwd = 2,lty = 5,add = TRUE)
+legend("topright",c("σ = 0.5","σ = 1","σ = 2","σ = 3"),col = c(1,2,3,"grey"),lty = c(1,2,4,5),cex = 1)
+
+``` 
+
 
